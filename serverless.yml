@@ -1,0 +1,35 @@
+service: lambda-autenticacao-pos
+
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+
+# you can overwrite defaults here
+  stage: dev
+  environment:
+    AWS_CHAVE_KEY: 
+    AWS_CHAVE_SECRET: 
+    AWS_REGION_KEY: 
+    COGNITO_CLIENT_ID_KEY: 
+    
+package:
+  individually: true  # Define package.individually como true a nível de serviço
+  patterns:
+    - '!node_modules/**'  # Padrões de pacote a nível de serviço que se aplicam a todas as funções
+
+functions:
+  validateUser:
+    handler: src/handler.validateUser
+    role: arn:aws:iam::590183845614:role/LabRole
+    events:
+      - httpApi:
+          path: /validateUser
+          method: post
+          payload:
+            contentHandling: CONVERT_TO_TEXT # Esta opção é importante para garantir que o corpo da solicitação seja enviado como texto
+plugins:
+  - serverless-offline
+  - serverless-plugin-typescript
+  
